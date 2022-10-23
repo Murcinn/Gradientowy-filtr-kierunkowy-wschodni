@@ -1,0 +1,2 @@
+LIBRARY FiltrAsm
+EXPORTS AsmProc
