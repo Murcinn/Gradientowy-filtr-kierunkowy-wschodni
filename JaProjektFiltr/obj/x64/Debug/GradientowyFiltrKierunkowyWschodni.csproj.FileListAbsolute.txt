@@ -1,0 +1,8 @@
+D:\JaProjektFiltr\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.AssemblyReference.cache
+D:\JaProjektFiltr\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.SuggestedBindingRedirects.cache
+D:\JaProjektFiltr\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.CoreCompileInputs.cache
+D:\JaProjektFiltr\JaProjektFiltr\bin\x64\Debug\JaProjektFiltr.exe.config
+D:\JaProjektFiltr\JaProjektFiltr\bin\x64\Debug\JaProjektFiltr.exe
+D:\JaProjektFiltr\JaProjektFiltr\bin\x64\Debug\JaProjektFiltr.pdb
+D:\JaProjektFiltr\JaProjektFiltr\obj\x64\Debug\JaProjektFiltr.exe
+D:\JaProjektFiltr\JaProjektFiltr\obj\x64\Debug\JaProjektFiltr.pdb
