@@ -1,3 +1,0 @@
-﻿     Trwa tworzenie biblioteki D:\JaProjektFiltr\x64\Debug\AsmProjekt.lib i obiektu D:\JaProjektFiltr\x64\Debug\AsmProjekt.exp
-AsmProjekt.exp : warning LNK4070: /OUT: dyrektywa FiltrAsm.dll w pliku .EXP jest inna niż nazwa pliku wyjściowego "D:\JaProjektFiltr\x64\Debug\AsmProjekt.dll"; dyrektywa została zignorowana
-  FiltrAsm.vcxproj -> D:\JaProjektFiltr\x64\Debug\AsmProjekt.dll
