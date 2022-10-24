@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradientowyFiltrKierunkowyWschodni", "JaProjektFiltr\GradientowyFiltrKierunkowyWschodni.csproj", "{2EF106E8-1CFB-4AE1-946F-7929FB13DCF4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0DEA660A-6920-4B76-89DE-E22AAC045A16} = {0DEA660A-6920-4B76-89DE-E22AAC045A16}
+		{D4FFC2B3-BF9C-4EEC-A363-2BA61223CDA6} = {D4FFC2B3-BF9C-4EEC-A363-2BA61223CDA6}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AsmProjekt", "AsmProjekt\FiltrAsm.vcxproj", "{0DEA660A-6920-4B76-89DE-E22AAC045A16}"

@@ -16,7 +16,7 @@ namespace JaProjektFiltr
     {
         [DllImport(@"D:\JaProjektFiltr\x64\Debug\AsmProjekt.dll")]
         static extern int AsmProc(int a, int b);
-        [DllImport(@"C:\Users\Marcin\Desktop\JaProjekt\x64\Debug\CppProjekt.dll")]
+        [DllImport(@"D:\JaProjektFiltr\x64\Debug\CppProjekt.ddl")]
         static extern int CppProc(int a, int b);
 
         private static List<Task> _tasksCpp = new List<Task>();
