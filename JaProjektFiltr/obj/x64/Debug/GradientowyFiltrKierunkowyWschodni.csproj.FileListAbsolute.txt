@@ -14,3 +14,11 @@ F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\Gra
 F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.CoreCompileInputs.cache
 F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\JaProjektFiltr.exe
 F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\JaProjektFiltr.pdb
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\bin\x64\Debug\JaProjektFiltr.exe.config
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\bin\x64\Debug\JaProjektFiltr.exe
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\bin\x64\Debug\JaProjektFiltr.pdb
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.AssemblyReference.cache
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.SuggestedBindingRedirects.cache
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\GradientowyFiltrKierunkowyWschodni.csproj.CoreCompileInputs.cache
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\JaProjektFiltr.exe
+C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\JaProjektFiltr\obj\x64\Debug\JaProjektFiltr.pdb

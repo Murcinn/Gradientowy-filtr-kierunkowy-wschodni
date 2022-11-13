@@ -8,161 +8,148 @@ using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
-//using static System.Net.Mime.MediaTypeNames;
+using System.Drawing.Imaging;
 
+
+using System.Windows.Media.Imaging;
+
+using JaProjektFiltr.Filter;
+using JaProjektFiltr.Extension;
+using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace JaProjektFiltr
 {
-    
-    //internal
+    enum ChooseDLL
+    {
+        Assembly,
+        Cpp
+    }
+
     internal class Program
     {
+        private BitmapSource _oldBitmap;
 
 
-        [DllImport(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll")]
-        public static extern void ChangeBitmapCpp(byte[] _data, int _dataLen, ref ImageInfo imTemplate);
+        private List<Interface> programInterface = new List<Interface>();
+        private List<Task> _tasks = new List<Task>();
+        private int _numberOfThreads;
+        private float[] _allPixels;
 
-        [DllImport(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll")]
-        public static extern void ReleaseMemoryCpp(IntPtr buf);
-       
-        //public struct ImageInfo
-        //{
-        //    public IntPtr _data;
-        //    public int _size;
-        //}
+        const int _bitsInByte = 8;
 
-        //public static Image ConvertImage(Image image)
-        //{
-        //    MemoryStream convertedImageMemoryStream;
-        //    using (MemoryStream sourceImageStream = new MemoryStream())
-        //    {
-        //        image.Save(sourceImageStream, System.Drawing.Imaging.ImageFormat.Bmp);
-        //        byte[] sourceImagePixels = sourceImageStream.ToArray();
-        //        ImageInfo imInfo = new ImageInfo();
-        //        ChangeBitmapCpp(sourceImagePixels, sourceImagePixels.Count(), ref imInfo);
 
-        //        byte[] imagePixels = new byte[imInfo._size];
-        //        Marshal.Copy(imInfo._data, imagePixels, 0, imInfo._size);
-        //        if (imInfo._data != IntPtr.Zero)
-        //            ReleaseMemoryCpp(imInfo._data);
-        //        convertedImageMemoryStream = new MemoryStream(imagePixels);
-        //        image.Save(convertedImageMemoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
-                
-                
-        //    }
-            
-        //    Image processed = new Bitmap(convertedImageMemoryStream);
-        //    //processed.Save("C:\\Users\\Marcin\\Desktop\\aaa.bmp");
-        //    return processed;
-        //}
 
-        [DllImport(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\AsmProjekt.dll")]
-        static extern int AsmProc(int a, int b);
-        [DllImport(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll")]
-        static extern int CppProc(int a, int b);
 
-        private static List<Task> _tasksCpp = new List<Task>();
-        private static List<Task> _tasksAsm = new List<Task>();
 
-        private static void runCppProc(int x, int y) {
-            int res = CppProc(x, y);
-            Console.Write("Suma Cpp: ");
-            Console.WriteLine(res+"\n");
 
-        }
-        private static void runAsmProc(int x, int y)
+        public static Interface Create(ChooseDLL languageLevel, int bytesPerPixel, int startIndex, int endIndex)
         {
-            int res = AsmProc(x, y);
-            Console.Write("Suma Asm: ");
-            Console.WriteLine(res + "\n");
-
-        }
-
-        public static void changeBitmap(Bitmap bmp)
-        {
-
-            for (int x = 0; x < bmp.Width; x++)
+            switch (languageLevel)
             {
-                for (int y = 0; y < bmp.Height; y++)
-                {
-
-                    Color clr = bmp.GetPixel(x, y);
-                    Color newClr = Color.FromArgb(clr.G, clr.B, 0);
-                    bmp.SetPixel(x, y, newClr);
-
-                }
+                case ChooseDLL.Assembly:
+                    return new AssemblyFilter( bytesPerPixel, startIndex, endIndex);
+                case ChooseDLL.Cpp:
+                    return new CppFilter( bytesPerPixel, startIndex, endIndex);
+                default:
+                    return null;
             }
-
         }
-        //==============================================================
 
-
-        [DllImport(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll")]
-        public static extern void ChangeBitmapCpp1(out IntPtr ptr, int width, int height);
-        
-        public IntPtr Scan0
+        public Program(BitmapSource bitmapImage, ChooseDLL languageLevel, int numberOfThreads)
         {
-            get;
-            set;
+            _oldBitmap = bitmapImage;
+            _allPixels = RetrievePixels(bitmapImage);
+            _numberOfThreads = numberOfThreads;
+            int pieceLenght = AdjustPieceLenght();
+            
+            for (int partNumber = 0; partNumber < _numberOfThreads; partNumber++)
+            {
+                int tempPartNumber = partNumber;
+                int pieceEnd;
+                if (partNumber + 1 == _numberOfThreads)
+                    pieceEnd = _allPixels.Length;
+                else
+                    pieceEnd = pieceLenght * (tempPartNumber + 1) - 1; programInterface.Add(Create(languageLevel,
+                        bitmapImage.Format.BitsPerPixel / _bitsInByte,
+                        pieceLenght * tempPartNumber,
+                        pieceEnd));
+                _tasks.Add(new Task(() => programInterface[tempPartNumber].ExecuteResult(_allPixels)));
+            }
         }
-        
-        public static void ConvertImage1(Bitmap finalBmp)
+
+        private int AdjustPieceLenght()
         {
-            Rectangle rect = new Rectangle(0, 0, finalBmp.Width, finalBmp.Height);
-            System.Drawing.Imaging.BitmapData bmpData =
-                finalBmp.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
-                finalBmp.PixelFormat);
+            int pieceLenght = _allPixels.Length / _numberOfThreads;
+            while (pieceLenght % (_oldBitmap.Format.BitsPerPixel / _bitsInByte) != 0)
+                pieceLenght++;
+            return pieceLenght;
+        }
 
-            IntPtr ptr = bmpData.Scan0;
+        private float[] RetrievePixels(BitmapSource bitmapImage)
+        {
+            return bitmapImage.ConvertToBmpArrayBGR();
+        }
 
+        public BitmapSource RunProgram(out System.TimeSpan elapsedTime)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
+            Parallel.ForEach(_tasks, (task) => task.Start());
+            Task.WaitAll(_tasks.ToArray());
 
-            ChangeBitmapCpp1(out ptr, bmpData.Stride, finalBmp.Height);
-            finalBmp.UnlockBits(bmpData);
-            finalBmp.Save("C:\\Users\\Marcin\\Desktop\\aaa.bmp");
+            stopwatch.Stop();
+            elapsedTime = stopwatch.Elapsed;
+            
+            
+            return _allPixels.ConvertBmpArrayBGRToImageByte(_oldBitmap.PixelWidth,_oldBitmap.PixelHeight, _oldBitmap.Format);
+        }
 
+        private void SaveImageToDisk(BitmapSource image, string filePath)
+        {
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    BitmapEncoder encoder = new BmpBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(image));
+                    encoder.Save(fileStream);
+                }
+            
         }
 
 
         static void Main(string[] args)
         {
-            int tempNumOFThreads = 5;
-            Random rnd = new Random();
-
-            //string curDir = Directory.GetDirectories();
-            //string myPath = Environment.GetFolderPath(Environment.);
-            //Console.WriteLine(curDir);
-
-            Bitmap bitmap = (Bitmap)Image.FromFile(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\Temp\bmpPath.bmp");
-            Console.WriteLine("Number of threads: " + tempNumOFThreads);
-            ConvertImage1(bitmap);
-            //for (int i = 0; i < tempNumOFThreads; i++) {             
-            // _tasksCpp.Add(new Task(() => runCppProc(rnd.Next(10), rnd.Next(10))));
-            //}
-
-            //for (int i = 0; i < tempNumOFThreads; i++)
-            //{
-            // _tasksAsm.Add(new Task(() => runAsmProc(rnd.Next(10), rnd.Next(10))));
-            //}
-
-            //Stopwatch sw = new Stopwatch();
-            //sw.Start();
-
-            //Parallel.ForEach(_tasksCpp, (task) => task.Start());
-            //Task.WaitAll(_tasksCpp.ToArray());
 
 
 
-            //Parallel.ForEach(_tasksAsm, (task) => task.Start());
-            //Task.WaitAll(_tasksAsm.ToArray());
 
-            //sw.Stop();
-            //System.TimeSpan elTime = sw.Elapsed;
-            //changeBitmap(bitmap);
+        BitmapSource _newBitmap = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
+        BitmapSource _newBitmap1 = new BitmapImage(new System.Uri("C:\\Users\\Marcin\\Desktop\\sample.bmp"));
 
 
+            //    Program progCpp=new Program(_newBitmap, ChooseDLL.Cpp,1);
 
-            //ConvertImage(bitmap).Save(@"F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\Temp\output.png");
+            //BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
+
+            //    progCpp.SaveImageToDisk(resCpp, "C:\\Users\\Marcin\\Desktop\\xd.bmp");
+
+            //    Console.Write("Czas wykonywania programu: " + elapsedTimeCpp+"\n\n");
+
+
+
+
+        Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 1);
+
+        BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
+
+        progAsm.SaveImageToDisk(resAsm, "C:\\Users\\Marcin\\Desktop\\xddAsm.bmp");
+
+        Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
+
+            //Console.ReadLine();
+        Environment.Exit(0);
 
 
 
