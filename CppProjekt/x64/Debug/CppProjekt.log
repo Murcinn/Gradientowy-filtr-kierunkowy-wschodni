@@ -1,6 +1,2 @@
-﻿  pch.cpp
-  dllmain.cpp
-  FiltrCpp.cpp
-  Generowanie kodu...
-     Trwa tworzenie biblioteki C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.lib i obiektu C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.exp
-  CppProjekt.vcxproj -> C:\Users\Marcin\Desktop\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll
+﻿  FiltrCpp.cpp
+  CppProjekt.vcxproj -> F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll

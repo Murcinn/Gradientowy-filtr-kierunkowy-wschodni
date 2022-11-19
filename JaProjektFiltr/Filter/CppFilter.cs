@@ -17,11 +17,11 @@ namespace JaProjektFiltr.Filter
         
         //"C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll"
         [DllImport("C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll", EntryPoint = "CppProc")]
-        private static extern void CppProc(float[] pixels, int size,int bytesPerPixel, int startIndex, int endIndex);
+        private static extern void CppProc(byte[] pixels, int size, int bytesPerPixel, int startIndex, int endIndex);
 
-        public override void ExecuteResult(float[] allPixels)
+        public override void ExecuteResult(byte[] allPixels)
         {
-            CppProc(allPixels, allPixels.Length,_bytesPerPixel, _startIndex, _endIndex);
+            CppProc(allPixels, allPixels.Length, _bytesPerPixel, _startIndex, _endIndex);
         }
 
     }

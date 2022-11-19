@@ -6,16 +6,14 @@ namespace JaProjektFiltr.Extension
 {
     public static class BitmapExtension
     {
-        public static float[] ConvertToBmpArrayBGR(this BitmapSource bitmapSource)
+        public static byte[] ConvertToBmpArrayBGR(this BitmapSource bitmapSource)
         {
             int step = bitmapSource.PixelWidth * (bitmapSource.Format.BitsPerPixel / 8);
             byte[] bytePixels = new byte[bitmapSource.PixelHeight * step];
 
             bitmapSource.CopyPixels(bytePixels, step, 0);
 
-            float[] floatPixels = bytePixels.ConvertToFloatArray();
-
-            return floatPixels;
+            return bytePixels;
         }
         //====
         public static float[] ConvertToFloatArray(this byte[] byteArray)
