@@ -34,7 +34,7 @@ mainLoop:
 	movd		dword ptr[rcx], xmm0		; save result pixel
 
 	add			rcx, 4						; increase data pointer by 16 bytes	
-	add			rdi, 1						; increase counter by 1
+	add			rdi, 4						; increase counter by 1
 
 
 	jmp			mainLoop					; go through loop

@@ -9,12 +9,14 @@ namespace JaProjektFiltr.Filter
 {
     internal class AssemblyFilter : Interface
     {
-        private float[] array255 = { -1.0f, -1.0f, -1.0f, 255.0f };
+       // private float[] array255 = { -1.0f, -1.0f, -1.0f, 255.0f };
+
+        private sbyte[] array255 = new sbyte[] { -1, -1, -1, 127 };
 
         public AssemblyFilter(int bytesPerPixel,int startIndex, int endIndex): base( bytesPerPixel, startIndex, endIndex) { }
 
         [DllImport("C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\AsmProjekt.dll", EntryPoint = "AsmProc")]
-        private static extern void AsmProc(byte[] pixels, float[] array255, int startIndex, int endIndex);
+        private static extern void AsmProc(byte[] pixels, sbyte[] array255, int startIndex, int endIndex);
 
         public override void ExecuteResult(byte[] allPixels)
         {

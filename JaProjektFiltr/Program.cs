@@ -140,13 +140,13 @@ namespace JaProjektFiltr
 
 
 
-            //Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 1);
+            Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 1);
 
-            //BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
+            BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
 
-            //progAsm.SaveImageToDisk(resAsm, "C:\\Users\\Marcin\\Desktop\\xddAsm.bmp");
+            progAsm.SaveImageToDisk(resAsm, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp");
 
-            //Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
+            Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
 
             //Console.ReadLine();
             Environment.Exit(0);
