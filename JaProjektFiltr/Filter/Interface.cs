@@ -12,16 +12,20 @@ namespace JaProjektFiltr.Filter
         //RGB 0.114f, 0.587f, 0.299f
         protected int _startIndex;
         protected int _endIndex;
-        protected int _bytesPerPixel;
 
-        public Interface(int bytesPerPixel, int startIndex, int endIndex)
+
+        public int _imageHeight;
+        public int _imageWidth;
+
+        public Interface( int startIndex, int endIndex, int imageWidth)
         {
             _startIndex = startIndex;
             _endIndex = endIndex;
-            _bytesPerPixel = bytesPerPixel;
+            _imageWidth = imageWidth;
+
         }
 
-        public abstract void ExecuteResult(byte[] allPixels);
+        public abstract void ExecuteResult(byte[] allOrginalPixels, byte[] allNewPixels);
 
     }
 }

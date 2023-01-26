@@ -11,17 +11,18 @@ namespace JaProjektFiltr.Filter
 {
     internal class CppFilter : Interface
     {
-        public CppFilter(int bytesPerPixel, int startIndex, int endIndex) : base(bytesPerPixel, startIndex, endIndex) { }
+        public CppFilter( int startIndex, int endIndex, int imageWidth) 
+            : base( startIndex, endIndex, imageWidth) { }
 
-         
-        
+
+
         //"C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll"
-        [DllImport("C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll", EntryPoint = "CppProc")]
-        private static extern void CppProc(byte[] pixels, int size, int bytesPerPixel, int startIndex, int endIndex);
+        [DllImport("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll", EntryPoint = "CppProc")]
+        private static extern void CppProc(byte[] orginalPixels, byte[] newPixels, int startIndex, int endIndex, int imageWidth);
 
-        public override void ExecuteResult(byte[] allPixels)
+        public override void ExecuteResult(byte[] allOrginalPixels, byte[] allNewPixels)
         {
-            CppProc(allPixels, allPixels.Length, _bytesPerPixel, _startIndex, _endIndex);
+            CppProc(allOrginalPixels, allNewPixels , _startIndex, _endIndex, _imageWidth);
         }
 
     }

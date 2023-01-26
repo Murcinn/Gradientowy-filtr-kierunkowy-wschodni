@@ -30,12 +30,14 @@ namespace JaProjektFiltr
     internal class Program
     {
         private BitmapSource _oldBitmap;
+        private BitmapSource _newBitmap;
 
 
         private List<Interface> programInterface = new List<Interface>();
         private List<Task> _tasks = new List<Task>();
         private int _numberOfThreads;
-        private byte[] _allPixels;
+        private byte[] _allOrginalPixels;
+        private byte[] _allNewPixels;
 
         const int _bitsInByte = 8;
 
@@ -44,14 +46,14 @@ namespace JaProjektFiltr
 
 
 
-        public static Interface Create(ChooseDLL languageLevel, int bytesPerPixel, int startIndex, int endIndex)
+        public static Interface Create(ChooseDLL languageLevel, int startIndex, int endIndex, int imgWidth)
         {
             switch (languageLevel)
             {
                 case ChooseDLL.Assembly:
-                    return new AssemblyFilter(bytesPerPixel, startIndex, endIndex);
+                    return new AssemblyFilter( startIndex, endIndex, imgWidth);
                 case ChooseDLL.Cpp:
-                    return new CppFilter(bytesPerPixel, startIndex, endIndex);
+                    return new CppFilter( startIndex, endIndex, imgWidth);
                 default:
                     return null;
             }
@@ -60,28 +62,42 @@ namespace JaProjektFiltr
         public Program(BitmapSource bitmapImage, ChooseDLL languageLevel, int numberOfThreads)
         {
             _oldBitmap = bitmapImage;
-            _allPixels = ReclaimPixels(bitmapImage);
+            _allOrginalPixels = ReclaimPixels(bitmapImage);
             _numberOfThreads = numberOfThreads;
             int partLenght = AdjustPieceLenght();
+            //_allNewPixels = ReclaimPixels(bitmapImage);
+            _newBitmap = bitmapImage;
+            //_newBitmap.Width=bitmapImage.Width-
+            double aaa = _newBitmap.Width;
+
 
             for (int partNumber = 0; partNumber < _numberOfThreads; partNumber++)
             {
                 int tempPartNumber = partNumber;
                 int partEnd;
                 if (partNumber + 1 == _numberOfThreads)
-                    partEnd = _allPixels.Length;
+                    partEnd = _allOrginalPixels.Length;
                 else
                     partEnd = partLenght * (tempPartNumber + 1);
-                                                             //)-1 
-                programInterface.Add(Create(languageLevel, bitmapImage.Format.BitsPerPixel / _bitsInByte, partLenght * tempPartNumber, partEnd));
-                _tasks.Add(new Task(() => programInterface[tempPartNumber].ExecuteResult(_allPixels)));
+                //)-1 
+
+                //int currIndex = bitmapImage.PixelWidth * 3 * (tempPartNumber * (partLenght / bitmapImage.PixelWidth) * bitmapImage.PixelWidth) +
+                               // ((partNumber+1) * bitmapImage.PixelWidth * 3) + 3;
+                //int currEndIndex=currIndex + bitmapImage+2*3;
+
+                //int a = (partLenght * tempPartNumber) + (bitmapImage.PixelWidth*4);
+                //int b = partEnd - (bitmapImage.PixelWidth*4);
+                //partLenght * tempPartNumber
+                programInterface.Add(Create(languageLevel, partLenght * tempPartNumber, partEnd,
+                                     bitmapImage.PixelWidth*3));
+                _tasks.Add(new Task(() => programInterface[tempPartNumber].ExecuteResult(_allOrginalPixels, _allNewPixels)));
             }
         }
 
         private int AdjustPieceLenght()
         {
 
-            int partLenght = _allPixels.Length / _numberOfThreads;
+            int partLenght = _allOrginalPixels.Length / _numberOfThreads;
             while (partLenght % (_oldBitmap.Format.BitsPerPixel / _bitsInByte) != 0)
                 partLenght++;
             return partLenght;
@@ -103,7 +119,7 @@ namespace JaProjektFiltr
             stopwatch.Stop();
             elapsedTime = stopwatch.Elapsed;
 
-            return _allPixels.ConvertBmpArrayBGRToImageFloat(_oldBitmap.PixelWidth, _oldBitmap.PixelHeight, _oldBitmap.Format);
+            return _allNewPixels.ConvertBmpArrayBGRToImageFloat(_oldBitmap.PixelWidth, _oldBitmap.PixelHeight, _oldBitmap.Format);
         }
 
         private void SaveImageToDisk(BitmapSource image, string filePath)
@@ -129,24 +145,24 @@ namespace JaProjektFiltr
         BitmapSource _newBitmap1 = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
 
 
-            //Program progCpp = new Program(_newBitmap, ChooseDLL.Cpp, 1);
+            Program progCpp = new Program(_newBitmap, ChooseDLL.Cpp, 2);
 
-            //BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
+            BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
 
-            //progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
+            progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
 
-            //Console.Write("Czas wykonywania programu: " + elapsedTimeCpp + "\n\n");
-
-
+            Console.Write("Czas wykonywania programu: " + elapsedTimeCpp + "\n\n");
 
 
-            Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 2);
 
-            BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
 
-            progAsm.SaveImageToDisk(resAsm, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp");
+            //Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 2);
 
-            Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
+            //BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
+
+            //progAsm.SaveImageToDisk(resAsm, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp");
+
+            //Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
 
             //Console.ReadLine();
             Environment.Exit(0);
