@@ -27,7 +27,7 @@ mainLoop:
 
 	;movdqu		oword ptr[rcx], xmm0		; save result pixel 
 	
-	movd		xmm0, dword ptr[rcx]		; take to xmm0 one pixel	
+	movd		xmm0, qword ptr[rcx]		; take to xmm0 one pixel	
 
 	mulps		xmm0, xmm1					; multiply xmm0 with xmm1
 

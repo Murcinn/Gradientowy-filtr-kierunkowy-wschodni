@@ -71,8 +71,8 @@ namespace JaProjektFiltr
                 if (partNumber + 1 == _numberOfThreads)
                     partEnd = _allPixels.Length;
                 else
-                    partEnd = partLenght * (tempPartNumber + 1) - 1;
-
+                    partEnd = partLenght * (tempPartNumber + 1);
+                                                             //)-1 
                 programInterface.Add(Create(languageLevel, bitmapImage.Format.BitsPerPixel / _bitsInByte, partLenght * tempPartNumber, partEnd));
                 _tasks.Add(new Task(() => programInterface[tempPartNumber].ExecuteResult(_allPixels)));
             }
@@ -129,18 +129,18 @@ namespace JaProjektFiltr
         BitmapSource _newBitmap1 = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
 
 
-            Program progCpp = new Program(_newBitmap, ChooseDLL.Cpp, 1);
+            //Program progCpp = new Program(_newBitmap, ChooseDLL.Cpp, 1);
 
-            BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
+            //BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
 
-            progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
+            //progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
 
-            Console.Write("Czas wykonywania programu: " + elapsedTimeCpp + "\n\n");
-
-
+            //Console.Write("Czas wykonywania programu: " + elapsedTimeCpp + "\n\n");
 
 
-            Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 1);
+
+
+            Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 2);
 
             BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
 

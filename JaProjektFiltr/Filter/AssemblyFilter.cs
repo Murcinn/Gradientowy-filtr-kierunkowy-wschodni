@@ -15,7 +15,7 @@ namespace JaProjektFiltr.Filter
 
         public AssemblyFilter(int bytesPerPixel,int startIndex, int endIndex): base( bytesPerPixel, startIndex, endIndex) { }
 
-        [DllImport("C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\AsmProjekt.dll", EntryPoint = "AsmProc")]
+        [DllImport("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\AsmProjekt.dll", EntryPoint = "AsmProc")]
         private static extern void AsmProc(byte[] pixels, sbyte[] array255, int startIndex, int endIndex);
 
         public override void ExecuteResult(byte[] allPixels)
