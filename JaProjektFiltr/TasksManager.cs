@@ -30,12 +30,13 @@ namespace JaProjektFiltr
 
         int _additionalLastThreadRows;
 
-
+        double timeResult;
 
 
 
         public TasksManager(BitmapSource bitmapImage, int numberOfThreads, Interface inter)
         {
+
             _oldBitmapSource = bitmapImage;
 
             _interface = inter;
@@ -109,20 +110,25 @@ namespace JaProjektFiltr
         }
 
 
+        public double getTime() {
 
+            return timeResult;
+        }
 
-        public byte[] RunProgram(out System.TimeSpan elapsedTime)
+        public byte[] RunProgram()
         {
 
-
+            System.TimeSpan elapsedTime;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             Parallel.ForEach(_tasks, (task) => task.Start());
             Task.WaitAll(_tasks.ToArray());
-
+            
             stopwatch.Stop();
             elapsedTime = stopwatch.Elapsed;
+            timeResult= stopwatch.Elapsed.TotalMilliseconds;
+
 
             return _allNewPixels;
 

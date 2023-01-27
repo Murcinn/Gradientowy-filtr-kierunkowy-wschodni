@@ -17,7 +17,7 @@ namespace JaProjektFiltr.Filter
 
 
         //"C:\\Users\\Marcin\\Desktop\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll"
-        [DllImport("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Debug\\CppProjekt.dll", EntryPoint = "CppProc")]
+        [DllImport("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\x64\\Release\\CppProjekt.dll", EntryPoint = "CppProc")]
         private static extern void CppProc(byte[] input, byte[] output, int startIndex, int endIndex, int imageWidth);
 
         public override void ExecuteResult(byte[] input, byte[] output, int startIndex, int endIndex, int imageWidth)
