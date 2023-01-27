@@ -46,15 +46,15 @@ namespace JaProjektFiltr
 
 
 
-            //Interface myInter1 = new AssemblyFilter();
+            Interface myInter1 = new AssemblyFilter();
 
-            //Program progAsm = new Program(_newBitmap1, 2, myInter1);
+            TasksManager progAsm = new TasksManager(_newBitmap1, 2, myInter1);
 
-            //byte[] resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
+            byte[] resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
 
-            //progAsm.SaveToFile( "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp",resAsm);
+            progAsm.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp", resAsm);
 
-            //Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
+            Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
 
             //Console.ReadLine();
             Environment.Exit(0);

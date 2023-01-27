@@ -1,46 +1,67 @@
-;r11  - start index
-;r10  - end index
-;xmm0 - pixels
-;xmm1 - negativ array with -1 values
-.code
+;RCX - OldPixels pointer
+;R8 - Starting index
+;R9 - End index
+;R10 - Stride
+;R11 - Negative width
+;R12 - NewPixels pointer
 
+;MASKA
+;-1  1  1
+;-1 -2  1 
+;-1  1  1 
+.code
 AsmProc proc
 
+mov ebx, dword ptr[rbp + 48]			;Move width to ebx
+mov r10, rbx							;Move stride to r10
 
-	mov			ebx, dword ptr[rbp + 32]	; load start inex
-	mov			r8, rbx					; and give it to r11
-	mov			ebx, dword ptr[rbp + 40]	; load end index
-	mov			r9, rbx					; and give it to r10
+xor r11, r11							;Clear R11 register
+sub r11, r10							;Assign negative value of width do R11
 
-	movdqu		xmm1, oword ptr[rdx]		; load negativ values to xmm1
-	
+mov r12, rdx							;Move NewPixelPointer to ebx
 
-	mov			rdi, r8					; establish counter with stat index value
+mov rdi, r8								;Establish counter from starting index to rdi
+add rcx, r8								;Move pointer to starting position
+add R12, r8								;Move pointer to starting position
 
-mainLoop:
-	cmp			rdi, r9					; if counter is equal with end index, end loop
-	je			endLoop						
-	
-	;movdqu		xmm0, oword ptr[rcx]		; take to xmm0 one pixel	
+programLoop:
+cmp rdi, r9								;Compare current index with end index - if equal, end loop
+je endLoop															
 
-	;mulss		xmm0, xmm1					; multiply xmm0 with xmm1
+pinsrb xmm1, byte ptr[RCX + R11 - 3], 0 ;Place maskValue on index 0 in xmm1
+pinsrb xmm1, byte ptr[RCX + R11]    , 1 ;Place maskValue on index 1 in xmm1
+pinsrb xmm1, byte ptr[RCX + R11 + 3], 2 ;Place maskValue on index 2 in xmm1
+pinsrb xmm1, byte ptr[RCX - 3]      , 3 ;Place maskValue on index 3 in xmm1
+movzx  ebx , byte ptr[RCX] 				;Place middle maskValue in ebx
+pinsrb xmm1, byte ptr[RCX + 3]      , 4 ;Place maskValue on index 4 in xmm1
+pinsrb xmm1, byte ptr[RCX + R10 - 3], 5 ;Place maskValue on index 5 in xmm1
+pinsrb xmm1, byte ptr[RCX + R10]    , 6 ;Place maskValue on index 6 in xmm1
+pinsrb xmm1, byte ptr[RCX + R10 + 3], 7 ;Place maskValue on index 7 in xmm1
 
-	;movdqu		oword ptr[rcx], xmm0		; save result pixel 
-	
-	movd		xmm0, dword ptr[rcx]		; take to xmm0 one pixel	
+mov eax, 9								;Move value 9 (from mask) to eax
+mul ebx									;Multiply pixel middle value by 9
 
-	mulps		xmm0, xmm1					; multiply xmm0 with xmm1
+pxor xmm2, xmm2							;Zero xmm2 register
+psadbw xmm1, xmm2						;Add all values pixel values to eachothers and store in in xmm1
+movd ebx, xmm1							;Move stored value into ebx
 
-	movd		dword ptr[rcx], xmm0		; save result pixel
+sub eax, ebx							;Subtract all added values with middle pixel multiplied by mask 
+										;(v1+v2+v3 .. +v8) - 9*v5
 
-	add			rcx, 4						; increase data pointer by 16 bytes	
-	add			rdi, 4	
-	;add			rdi, 4						; increase counter by 1
+mov     ebx, 255						;Clamp the value we got between 0 - 255
+cmp     eax, ebx						;	
+cmovg   eax, ebx						;
+test    eax, eax						;
+mov     ebx, 0							;
+cmovl   eax, ebx						;
 
+mov byte ptr[R12], al					;Place clamped value in extact place in table
 
-	jmp			mainLoop					; go through loop
+inc rdi									;Increment current index (loop)
+inc rcx									;Increment index (oldPixelsPointer)
+inc R12									;Increment index (newPixelsPointer)
+jmp programLoop
 endLoop:
 ret
 AsmProc endp
-
 end
