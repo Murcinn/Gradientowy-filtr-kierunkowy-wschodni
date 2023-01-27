@@ -4,63 +4,55 @@
 #include <iostream>
 
 
-float kernel[9] = {
-					-1,  1,  1,
-					-1, -2,  1,
-					-1,  1,  1
-					};
 
+constexpr int xd = 3;
 
-void RndFilter(BYTE* orginalPixels, BYTE* newPixels, int startIndex, int endIndex, int imageWidth)
-{
-	int xd = 3;
+inline int RndFilter(BYTE* orginalPixels, BYTE* newPixels, int startIndex, int endIndex, int imageWidth,int index, float* kernel)
+{	
+	return			(orginalPixels[index - imageWidth - xd]				* kernel[0]) +
+					(orginalPixels[index - imageWidth]					* kernel[1]) +
+					(orginalPixels[index - imageWidth + xd]				* kernel[2]) +
+					(orginalPixels[index - xd]							* kernel[3]) +
+					(orginalPixels[index]								* kernel[4]) +
+					(orginalPixels[index + xd]							* kernel[5]) +
+					(orginalPixels[index + imageWidth - xd]				* kernel[6]) +
+					(orginalPixels[index + imageWidth]					* kernel[7]) +
+					(orginalPixels[index + imageWidth	+ xd]			* kernel[8]);
 
-	for (int i = startIndex; i < endIndex; i++) {
-	
-	newPixels[i]=   (orginalPixels[i - imageWidth - xd]			* kernel[0]) +
-					(orginalPixels[i - imageWidth]					* kernel[1]) +
-					(orginalPixels[i - imageWidth + xd]			* kernel[2]) +
-					(orginalPixels[i - xd]						* kernel[3]) +
-					(orginalPixels[i]								* kernel[4]) +
-					(orginalPixels[i + xd]						* kernel[5]) +
-					(orginalPixels[i + imageWidth - xd]			* kernel[6]) +
-					(orginalPixels[i + imageWidth]					* kernel[7]) +
-					(orginalPixels[i + imageWidth	+ xd]			* kernel[8]);
-
-
+	//int k = newPixels[i];
 		//newPixels[i] = orginalPixels[endIndex - i];
 		
 
-		if (newPixels[i] > 255)
-		{
-			newPixels[i] = 255;
-		}
-		else if (newPixels[i] < 0)
-		{
-			newPixels[i] = 0;
-		}
+		//if (newPixels[i] > 255)
+		//{
+		//	newPixels[i] = 255;
+		//}
+		//else if (newPixels[i] < 0)
+		//{
+		//	newPixels[i] = 0;
+		//}
 
 
 	
-	}
+	//}
 
-	//for (int i = startIndex; i < endIndex; i += 8) {
+	//for (int i = startIndex; i < endIndex; i += 3) {
 
 	//	newPixels[i] = 0;
 	//	newPixels[i + 1] = orginalPixels[i + 1];
 	//	newPixels[i + 2] = 0;
 	//}
 
-	std::cout << "xdd";
+	//std::cout << "xdd";
 
 
 
 
-	//for (int i = startIndex; i < endIndex; i += 4) {
+	//for (int i = startIndex; i < endIndex; i += 3) {
 
 	//	newPixels[i] = 0;
-	//	newPixels[i + 1] = orginalPixels[i + 1];
-	//	newPixels[i + 2] = 0;
+	//	newPixels[i + 1] = 0;
+	//	newPixels[i + 2] = orginalPixels[i + 2];;
 	//}
 
 	//BYTE* tempPixels = pixels;
@@ -94,12 +86,31 @@ void RndFilter(BYTE* orginalPixels, BYTE* newPixels, int startIndex, int endInde
 
 }
 
+
+
+
 extern "C" __declspec(dllexport) void CppProc(
-	BYTE * orginalPixels, BYTE* newPixels, int startIndex, int endIndex, int imageWidth)
+	BYTE * orginalPixels, BYTE * newPixels, int startIndex, int endIndex, int imageWidth)
 {
+	float kernel[9] = {
+					-1,  1,  1,
+					-1, -2,  1,
+					-1,  1,  1
+	};
 
+	for (int i = startIndex; i < endIndex; i ++) {
+		int temp =RndFilter(orginalPixels, newPixels, startIndex, endIndex, imageWidth,i,kernel);
 
-	RndFilter(orginalPixels,newPixels, startIndex, endIndex, imageWidth);
+		if (temp > 255)
+		{
+			temp = 255;
+		}
+		else if (temp < 0)
+		{
+			temp = 0;
+		}
 
+		newPixels[i] = temp;
+	}
 }
 

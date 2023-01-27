@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-using System.Threading;
 using System.Diagnostics;
 using System.IO;
 using System.Drawing.Imaging;
@@ -15,9 +12,6 @@ using System.Windows.Media.Imaging;
 
 using JaProjektFiltr.Filter;
 using JaProjektFiltr.Extension;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Net.Http;
 
 namespace JaProjektFiltr
 {
@@ -29,87 +23,134 @@ namespace JaProjektFiltr
 
     internal class Program
     {
-        private BitmapSource _oldBitmap;
-        private BitmapSource _newBitmap;
+        private BitmapSource _oldBitmapSource;
+
+        Interface           _interface;
+        private List<Task>  _tasks = new List<Task>();
+        private byte[]      _allOrginalPixels;
+        private byte[]      _allNewPixels;
+
+        private int         _numberOfThreads;
+        private int         _rowsPerThread;
 
 
-        private List<Interface> programInterface = new List<Interface>();
-        private List<Task> _tasks = new List<Task>();
-        private int _numberOfThreads;
-        private byte[] _allOrginalPixels;
-        private byte[] _allNewPixels;
+        int _imageWidth;
+        int _imageHeight;
 
-        const int _bitsInByte = 8;
+        int _additionalLastThreadRows;
 
+        private const PixelFormat Rgb24Format = PixelFormat.Format24bppRgb;
 
 
 
-
-
-        public static Interface Create(ChooseDLL languageLevel, int startIndex, int endIndex, int imgWidth)
+        public Program(BitmapSource bitmapImage, int numberOfThreads, Interface inter)
         {
-            switch (languageLevel)
-            {
-                case ChooseDLL.Assembly:
-                    return new AssemblyFilter( startIndex, endIndex, imgWidth);
-                case ChooseDLL.Cpp:
-                    return new CppFilter( startIndex, endIndex, imgWidth);
-                default:
-                    return null;
-            }
-        }
+            _oldBitmapSource = bitmapImage;
 
-        public Program(BitmapSource bitmapImage, ChooseDLL languageLevel, int numberOfThreads)
-        {
-            _oldBitmap = bitmapImage;
-            _allOrginalPixels = ReclaimPixels(bitmapImage);
+            _interface = inter;
+            _allOrginalPixels = BitmapToByteArray(BitmapFromSource(bitmapImage));
+            _allNewPixels = BitmapToByteArray(BitmapFromSource(bitmapImage), false);
+
             _numberOfThreads = numberOfThreads;
-            int partLenght = AdjustPieceLenght();
-            //_allNewPixels = ReclaimPixels(bitmapImage);
-            _newBitmap = bitmapImage;
-            //_newBitmap.Width=bitmapImage.Width-
-            double aaa = _newBitmap.Width;
+            _rowsPerThread = (bitmapImage.PixelHeight - 2) / _numberOfThreads;
+
+            _imageWidth = _oldBitmapSource.PixelWidth;
+            _imageHeight = _oldBitmapSource.PixelHeight;
 
 
-            for (int partNumber = 0; partNumber < _numberOfThreads; partNumber++)
+            MakeAdditionalThreadRows();
+            SetTasks();
+
+        }
+
+
+        private void SetTasks() {
+
+            for (int partNumber = 0; partNumber < _numberOfThreads-1; partNumber++)
             {
-                int tempPartNumber = partNumber;
-                int partEnd;
-                if (partNumber + 1 == _numberOfThreads)
-                    partEnd = _allOrginalPixels.Length;
-                else
-                    partEnd = partLenght * (tempPartNumber + 1);
-                //)-1 
-
-                //int currIndex = bitmapImage.PixelWidth * 3 * (tempPartNumber * (partLenght / bitmapImage.PixelWidth) * bitmapImage.PixelWidth) +
-                               // ((partNumber+1) * bitmapImage.PixelWidth * 3) + 3;
-                //int currEndIndex=currIndex + bitmapImage+2*3;
-
-                //int a = (partLenght * tempPartNumber) + (bitmapImage.PixelWidth*4);
-                //int b = partEnd - (bitmapImage.PixelWidth*4);
-                //partLenght * tempPartNumber
-                programInterface.Add(Create(languageLevel, partLenght * tempPartNumber, partEnd,
-                                     bitmapImage.PixelWidth*3));
-                _tasks.Add(new Task(() => programInterface[tempPartNumber].ExecuteResult(_allOrginalPixels, _allNewPixels)));
+                _tasks.Add(CreateTask(partNumber,0));
             }
+            Console.WriteLine("xddddd");
+            _tasks.Add(CreateTask(_numberOfThreads-1,_additionalLastThreadRows));
+
+
         }
 
-        private int AdjustPieceLenght()
-        {
 
-            int partLenght = _allOrginalPixels.Length / _numberOfThreads;
-            while (partLenght % (_oldBitmap.Format.BitsPerPixel / _bitsInByte) != 0)
-                partLenght++;
-            return partLenght;
+
+            private Task CreateTask(int taskID, int additionalRows){
+            
+            return new Task(() =>{
+                
+                for (int i = 0; i < _rowsPerThread+ additionalRows; i++){
+
+                    int startId = SetStartIndex(taskID, i);
+                    int endId = startId + (_imageWidth*3 - 6);
+                    _interface.ExecuteResult(_allOrginalPixels, _allNewPixels, startId, endId, _imageWidth*3);
+
+
+                }
+
+            });
         }
 
-        private byte[] ReclaimPixels(BitmapSource bitmapImage)
-        {
-            return bitmapImage.ConvertToBmpArrayBGR();
+        private int SetStartIndex(int taskID, int threadRow) {
+
+            int temp = _imageWidth * 3;
+            int threadPoolFirstObject = temp + (taskID * _rowsPerThread * temp);
+            int currentIndex = threadPoolFirstObject + (threadRow * temp) + 3;
+            return currentIndex;
+
+
         }
 
-        public BitmapSource RunProgram(out System.TimeSpan elapsedTime)
+        private void MakeAdditionalThreadRows() {
+
+            //_rowsPerThread = _imageHeight / _numberOfThreads;
+
+            if (_numberOfThreads * _rowsPerThread != _imageHeight)
+            {
+                _additionalLastThreadRows = _imageHeight % _numberOfThreads;
+            }
+
+        }
+
+        byte[] BitmapToByteArray(Bitmap bmp, bool fillWithData = true)
         {
+            System.Drawing.Imaging.PixelFormat Rgb24Format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Rgb24Format);
+
+            byte[] outputBytes = new byte[(Math.Abs(bmpData.Stride) * bmp.Height)];
+
+            if (fillWithData)
+            {
+                Marshal.Copy(bmpData.Scan0, outputBytes, 0, (Math.Abs(bmpData.Stride) * bmp.Height));
+            }
+
+            bmp.UnlockBits(bmpData);
+            return outputBytes;
+        }
+
+        public static Bitmap BitmapFromSource(BitmapSource bitmapsource)
+        {
+            Bitmap bitmap;
+            using (var outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+                enc.Save(outStream);
+                bitmap = new Bitmap(outStream);
+            }
+            return bitmap;
+        }
+
+
+
+        public  byte[] RunProgram(out System.TimeSpan elapsedTime)
+        {
+            //BitmapSource
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -119,7 +160,10 @@ namespace JaProjektFiltr
             stopwatch.Stop();
             elapsedTime = stopwatch.Elapsed;
 
-            return _allNewPixels.ConvertBmpArrayBGRToImageFloat(_oldBitmap.PixelWidth, _oldBitmap.PixelHeight, _oldBitmap.Format);
+            //return _allOrginalPixels.ConvertBmpArrayBGRToImageFloat(_oldBitmapSource.PixelWidth, _oldBitmapSource.PixelHeight, _oldBitmapSource.Format);
+            return _allNewPixels;
+
+
         }
 
         private void SaveImageToDisk(BitmapSource image, string filePath)
@@ -134,6 +178,21 @@ namespace JaProjektFiltr
 
         }
 
+        public void SaveToFile(String path,byte[] output)
+        {
+            Bitmap newBitmap = NiezlaFunkcja(output, _oldBitmapSource.PixelWidth, _oldBitmapSource.PixelHeight);
+            newBitmap.Save(path);
+        }
+
+
+        public Bitmap NiezlaFunkcja(byte[] byteIn,int w, int h)
+        {
+            Bitmap outputBitmap = new Bitmap(w,h, Rgb24Format);
+            BitmapData bmpData = outputBitmap.LockBits(new Rectangle(0, 0, w, h ), ImageLockMode.WriteOnly, Rgb24Format);
+            Marshal.Copy(byteIn, 0, bmpData.Scan0, (Math.Abs(bmpData.Stride) * _oldBitmapSource.PixelHeight));
+            outputBitmap.UnlockBits(bmpData);
+            return outputBitmap;
+        }
 
         static void Main(string[] args)
         {
@@ -144,23 +203,27 @@ namespace JaProjektFiltr
         BitmapSource _newBitmap = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
         BitmapSource _newBitmap1 = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
 
+            Interface myInter = new CppFilter();
 
-            Program progCpp = new Program(_newBitmap, ChooseDLL.Cpp, 2);
+            Program progCpp = new Program(_newBitmap,2, myInter);
 
-            BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
+            //BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
+            byte[] resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
 
-            progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
+            //progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
 
+            progCpp.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp",resCpp);
             Console.Write("Czas wykonywania programu: " + elapsedTimeCpp + "\n\n");
 
 
 
+            //Interface myInter1 = new AssemblyFilter();
 
-            //Program progAsm = new Program(_newBitmap1, ChooseDLL.Assembly, 2);
+            //Program progAsm = new Program(_newBitmap1, 2, myInter1);
 
-            //BitmapSource resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
+            //byte[] resAsm = progAsm.RunProgram(out System.TimeSpan elapsedTimeAsm);
 
-            //progAsm.SaveImageToDisk(resAsm, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp");
+            //progAsm.SaveToFile( "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp",resAsm);
 
             //Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
 

@@ -1,11 +1,13 @@
 ﻿using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using System.Windows;
 
 namespace JaProjektFiltr.Extension
 {
     public static class BitmapExtension
     {
+
+        
+
         public static byte[] ConvertToBmpArrayBGR(this BitmapSource bitmapSource)
         {
             int step = bitmapSource.PixelWidth * (bitmapSource.Format.BitsPerPixel / 8);
@@ -26,8 +28,10 @@ namespace JaProjektFiltr.Extension
             return newFloatArray;
         }
 
-        public static BitmapSource ConvertBmpArrayBGRToImageFloat(this byte[] pixels, int width, int height, PixelFormat pixelFormat)
+        public static BitmapSource ConvertBmpArrayBGRToImageFloat(this byte[] pixels, int width, int height, System.Windows.Media.PixelFormat pixelFormat)
         {
+            
+
             const int bitsInByte = 8;
             const int dpi = 300;
             WriteableBitmap bitmap = new WriteableBitmap(width, height, dpi, dpi, pixelFormat, null);
@@ -48,11 +52,13 @@ namespace JaProjektFiltr.Extension
         }
 
 
-        public static BitmapSource ConvertBmpArrayBGRToImageByte(this float[] pixels, int width, int height, PixelFormat pixelFormat)
-        {
-            byte[] byteArray = pixels.ConvertToByteArray();
-            return byteArray.ConvertBmpArrayBGRToImageFloat(width, height, pixelFormat);
-        }
+        //public static BitmapSource ConvertBmpArrayBGRToImageByte(this float[] pixels, int width, int height, PixelFormat pixelFormat)
+        //{
+        //    byte[] byteArray = pixels.ConvertToByteArray();
+        //    return byteArray.ConvertBmpArrayBGRToImageFloat(width, height, pixelFormat);
+        //}
+
+
 
 
     }
