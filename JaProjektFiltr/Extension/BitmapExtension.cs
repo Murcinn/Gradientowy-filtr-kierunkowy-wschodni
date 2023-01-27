@@ -1,65 +1,54 @@
 ﻿using System.Windows.Media.Imaging;
 using System.Windows;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System;
 
 namespace JaProjektFiltr.Extension
 {
     public static class BitmapExtension
     {
-
-        
-
-        public static byte[] ConvertToBmpArrayBGR(this BitmapSource bitmapSource)
+        private const PixelFormat Rgb24Format = PixelFormat.Format24bppRgb;
+        public static byte[] ConvertBitmapToByteArray(this Bitmap bmp, bool fillWithData = true)
         {
-            int step = bitmapSource.PixelWidth * (bitmapSource.Format.BitsPerPixel / 8);
-            byte[] bytePixels = new byte[bitmapSource.PixelHeight * step];
+            System.Drawing.Imaging.PixelFormat Rgb24Format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
 
-            bitmapSource.CopyPixels(bytePixels, step, 0);
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, Rgb24Format);
 
-            return bytePixels;
-        }
-        //====
-        public static float[] ConvertToFloatArray(this byte[] byteArray)
-        {
-            float[] newFloatArray = new float[byteArray.Length];
-            for (int i = 0; i < newFloatArray.Length; i++)
+            byte[] outputBytes = new byte[(Math.Abs(bmpData.Stride) * bmp.Height)];
+
+            if (fillWithData)
             {
-                newFloatArray[i] = (float)byteArray[i];
+                Marshal.Copy(bmpData.Scan0, outputBytes, 0, (Math.Abs(bmpData.Stride) * bmp.Height));
             }
-            return newFloatArray;
+
+            bmp.UnlockBits(bmpData);
+            return outputBytes;
         }
 
-        public static BitmapSource ConvertBmpArrayBGRToImageFloat(this byte[] pixels, int width, int height, System.Windows.Media.PixelFormat pixelFormat)
+        public static Bitmap BitmapFromBitmapSource(this BitmapSource bitmapsource)
         {
-            
-
-            const int bitsInByte = 8;
-            const int dpi = 300;
-            WriteableBitmap bitmap = new WriteableBitmap(width, height, dpi, dpi, pixelFormat, null);
-
-            bitmap.WritePixels(new Int32Rect(0, 0, width, height), pixels, width * (bitmap.Format.BitsPerPixel / bitsInByte), 0);
-            
+            Bitmap bitmap;
+            using (var outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+                enc.Save(outStream);
+                bitmap = new Bitmap(outStream);
+            }
             return bitmap;
         }
-        //===
-        public static byte[] ConvertToByteArray(this float[] floatArray)
+
+        public static Bitmap ConvertByteArrayToBitmap(this byte[] byteIn, int w, int h)
         {
-            byte[] newByteArray = new byte[floatArray.Length];
-            for (int i = 0; i < newByteArray.Length; i++)
-            {
-                newByteArray[i] = (byte)floatArray[i];
-            }
-            return newByteArray;
+            Bitmap outputBitmap = new Bitmap(w, h, Rgb24Format);
+            BitmapData bmpData = outputBitmap.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.WriteOnly, Rgb24Format);
+            Marshal.Copy(byteIn, 0, bmpData.Scan0, (Math.Abs(bmpData.Stride) * h));
+            outputBitmap.UnlockBits(bmpData);
+            return outputBitmap;
         }
-
-
-        //public static BitmapSource ConvertBmpArrayBGRToImageByte(this float[] pixels, int width, int height, PixelFormat pixelFormat)
-        //{
-        //    byte[] byteArray = pixels.ConvertToByteArray();
-        //    return byteArray.ConvertBmpArrayBGRToImageFloat(width, height, pixelFormat);
-        //}
-
-
-
 
     }
 }
