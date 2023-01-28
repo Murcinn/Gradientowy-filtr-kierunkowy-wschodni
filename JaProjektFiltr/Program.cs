@@ -43,7 +43,7 @@ namespace JaProjektFiltr
             {
                 Interface myInter1 = new AssemblyFilter();
 
-                TasksManager progAsm = new TasksManager(_newBitmap1, 5, myInter1);
+                TasksManager progAsm = new TasksManager(_newBitmap, 5, myInter1);
 
                 progAsm.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp", progAsm.RunProgram());
                 //progAsm.RunProgram();
