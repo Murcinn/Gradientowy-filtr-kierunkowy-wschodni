@@ -1,1 +1,4 @@
-﻿  FiltrAsm.vcxproj -> F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\AsmProjekt.dll
+﻿  Assembling FiltrAsm.asm...
+     Trwa tworzenie biblioteki F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\AsmProjekt.lib i obiektu F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\AsmProjekt.exp
+AsmProjekt.exp : warning LNK4070: /OUT: dyrektywa FiltrAsm.dll w pliku .EXP jest inna niż nazwa pliku wyjściowego "F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\AsmProjekt.dll"; dyrektywa została zignorowana
+  FiltrAsm.vcxproj -> F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\AsmProjekt.dll

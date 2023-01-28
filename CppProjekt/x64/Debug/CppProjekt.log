@@ -1,1 +1,3 @@
-﻿  CppProjekt.vcxproj -> F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll
+﻿  FiltrCpp.cpp
+F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\CppProjekt\FiltrCpp.cpp(19,51): warning C4244: "return": konwersja z "float" do "int", możliwa utrata danych
+  CppProjekt.vcxproj -> F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll

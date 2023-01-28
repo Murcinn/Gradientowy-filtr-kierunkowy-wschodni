@@ -32,41 +32,23 @@ namespace JaProjektFiltr
         
 
         BitmapSource _newBitmap = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
-        BitmapSource _newBitmap1 = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath.bmp"));
-
-
-
-            //BitmapSource resCpp = progCpp.RunProgram(out System.TimeSpan elapsedTimeCpp);
-            //byte[] resCpp = progCpp.RunProgram();
-            
-            //progCpp.SaveImageToDisk(resCpp, "F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp");
-
-            //progCpp.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp",resCpp);
-            //Console.Write("Czas wykonywania programu: " + elapsedTimeCpp + "\n\n");
+        BitmapSource _newBitmap1 = new BitmapImage(new System.Uri("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpPath1.bmp"));
 
 
 
 
 
-            //byte[] resAsm = progAsm.RunProgram();
-            
-            //progAsm.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp", resAsm);
-
-            //Console.Write("Czas wykonywania programu: " + elapsedTimeAsm + "\n\n");
-
-            
-            
-            
-            double[] arr= new double[20];
+            double[] arr = new double[20];
             for (int i = 0; i < arr.Length; i++)
             {
                 Interface myInter1 = new AssemblyFilter();
 
-                TasksManager progAsm = new TasksManager(_newBitmap1, 1, myInter1);
+                TasksManager progAsm = new TasksManager(_newBitmap1, 5, myInter1);
 
-                progAsm.RunProgram();
+                progAsm.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp", progAsm.RunProgram());
+                //progAsm.RunProgram();
                 arr[i] = progAsm.getTime();
-                Console.WriteLine(arr[i]);      
+                Console.WriteLine(arr[i]);
 
             }
 
@@ -75,19 +57,35 @@ namespace JaProjektFiltr
 
 
 
-            double[] arr1 = new double[20];
-            for (int i = 0; i < arr.Length; i++)
-            {
-                Interface myInter = new CppFilter();
+            //double[] arr1 = new double[20];
+            //for (int i = 0; i < arr1.Length; i++)
+            //{
+            //    Interface myInter = new CppFilter();
 
-                TasksManager progCpp = new TasksManager(_newBitmap, 1, myInter);
-
-                progCpp.RunProgram();
-                arr1[i] = progCpp.getTime();
-                Console.WriteLine(arr1[i]);
+            //    TasksManager progCpp = new TasksManager(_newBitmap1, 5, myInter);
+            //    progCpp.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp", progCpp.RunProgram());
+            //    //progCpp.RunProgram();
 
 
-            }
+            //    //if (i == arr.Length - 1)
+            //    //{
+
+            //    //    progCpp.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp", progCpp.RunProgram());
+            //    //    //progCpp.RunProgram();
+
+
+            //    //}
+            //    //else
+            //    //{
+
+            //    //    //progCpp.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpCppOut.bmp", progCpp.RunProgram());
+            //    //    progCpp.RunProgram();
+
+            //    //}
+            //    arr1[i] = progCpp.getTime();
+            //    Console.WriteLine(arr1[i]);
+
+            //}
 
             //Array.Sort(arr);
             //Console.WriteLine();

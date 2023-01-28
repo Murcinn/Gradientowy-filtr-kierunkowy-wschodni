@@ -49,8 +49,8 @@ namespace JaProjektFiltr
             _imageWidth = _oldBitmapSource.PixelWidth;
             _imageHeight = _oldBitmapSource.PixelHeight;
 
-
-            MakeAdditionalThreadRows();
+            CalculateThreadsValues();
+            //MakeAdditionalThreadRows();
             SetTasks();
 
         }
@@ -61,7 +61,7 @@ namespace JaProjektFiltr
 
             for (int partNumber = 0; partNumber < _numberOfThreads - 1; partNumber++)
             {
-                _tasks.Add(CreateTask(partNumber, 0));
+                _tasks.Add(CreateTask(partNumber));
             }
 
             _tasks.Add(CreateTask(_numberOfThreads - 1, _additionalLastThreadRows));
@@ -70,7 +70,7 @@ namespace JaProjektFiltr
         }
 
 
-        private Task CreateTask(int taskID, int additionalRows)
+        private Task CreateTask(int taskID, int additionalRows=0)
         {
 
             return new Task(() => {
@@ -97,16 +97,41 @@ namespace JaProjektFiltr
 
         }
 
-        private void MakeAdditionalThreadRows()
+        //private void MakeAdditionalThreadRows()
+        //{
+
+        //    _rowsPerThread = _imageHeight / _numberOfThreads;
+
+        //    if (_numberOfThreads * _rowsPerThread != _imageHeight)
+        //    {
+        //        _additionalLastThreadRows = _imageHeight % _numberOfThreads;
+        //    }
+
+        //}
+
+        private void CalculateThreadsValues()
         {
+            //int width = _bmp.Width;
+            //int height = _bmp.Height;
 
-            //_rowsPerThread = _imageHeight / _numberOfThreads;
+           // realWidth = _bmp.Stride - 2 * _pixelStride;
+            //realHeight = height - 2;
 
-            if (_numberOfThreads * _rowsPerThread != _imageHeight)
+            if (_numberOfThreads <= 0)
             {
-                _additionalLastThreadRows = _imageHeight % _numberOfThreads;
+                _numberOfThreads = 1;
+            }
+            else if (_numberOfThreads >= 64)
+            {
+                _numberOfThreads = 64;
             }
 
+            _rowsPerThread = (_oldBitmapSource.PixelHeight-2) / _numberOfThreads;
+
+            if (_numberOfThreads * _rowsPerThread != (_oldBitmapSource.PixelHeight - 2))
+            {
+                _additionalLastThreadRows = (_oldBitmapSource.PixelHeight - 2) % _numberOfThreads;
+            }
         }
 
 
