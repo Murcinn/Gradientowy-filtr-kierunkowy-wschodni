@@ -31,7 +31,8 @@ namespace JaProjektFiltr
             //User interaction
 
             String algorithmType;
-            String filePath;
+            String inputFilePath;
+            String outputFilePath;
             String numOfThreads;
 
             Console.WriteLine("Choose algorithm you want to use (1/2):");
@@ -39,14 +40,17 @@ namespace JaProjektFiltr
             Console.WriteLine("2.Cpp Algorithm");
             algorithmType=Console.ReadLine();
             Console.Clear();
-            Console.WriteLine("Enter file path:");
-            filePath= Console.ReadLine();
+            Console.WriteLine("Enter input file path:");
+            inputFilePath= Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("Enter output file path:");
+            outputFilePath = Console.ReadLine();
             Console.Clear();
             Console.WriteLine("Give number of threads:");
             numOfThreads = Console.ReadLine();
             Console.Clear();
 
-            BitmapSource newBitmap = new BitmapImage(new System.Uri(filePath));
+            BitmapSource newBitmap = new BitmapImage(new System.Uri(inputFilePath));
 
 
             if (int.Parse(algorithmType) == 1) {
@@ -57,20 +61,18 @@ namespace JaProjektFiltr
 
                     TasksManager progAsm = new TasksManager(newBitmap, int.Parse(numOfThreads), myInter1);
 
-                    progAsm.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp", progAsm.RunProgram());
+                    progAsm.SaveToFile(outputFilePath, progAsm.RunProgram());
                     //progAsm.RunProgram();
                     arr[i] = progAsm.getTime();
                     //Console.WriteLine(arr[i]);
 
-                    Array.Sort(arr);
-                    Console.WriteLine("Algorithm parameters:");
-                    Console.WriteLine();
-                    Console.WriteLine("Number of threads: " + int.Parse(numOfThreads));
-                    Console.WriteLine("Algorithm language: Cpp");
-                    Console.WriteLine("algorithm duration: " + arr[50]+"ms");
-
-
                 }
+                Array.Sort(arr);
+                Console.WriteLine("Algorithm parameters:");
+                Console.WriteLine();
+                Console.WriteLine("Number of threads: " + int.Parse(numOfThreads));
+                Console.WriteLine("Algorithm language: Cpp");
+                Console.WriteLine("algorithm duration: " + arr[50] + "ms");
             } else if (int.Parse(algorithmType) == 2) {
 
                 double[] arr = new double[100];
@@ -80,7 +82,7 @@ namespace JaProjektFiltr
 
                     TasksManager progAsm = new TasksManager(newBitmap, int.Parse(numOfThreads), myInter1);
 
-                    progAsm.SaveToFile("F:\\GitHub\\Gradientowy-filtr-kierunkowy-wschodni\\Temp\\bmpAsmOut.bmp", progAsm.RunProgram());
+                    progAsm.SaveToFile(outputFilePath, progAsm.RunProgram());
                     //progAsm.RunProgram();
                     arr[i] = progAsm.getTime();
                     //Console.WriteLine(arr[i]);

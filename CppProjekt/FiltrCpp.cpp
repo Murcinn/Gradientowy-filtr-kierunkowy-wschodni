@@ -3,15 +3,15 @@
 #include <vector>
 #include <iostream>
 
-float kernel[9] = {
+int kernel[9] = {
 				-1,  1,  1,
 				-1, -2,  1,
 				-1,  1,  1
 };
 
-constexpr int xd = 3;
+constexpr int step = 3;
 
-inline BYTE CheckRange(int value)
+BYTE CheckRange(int value)
 {
 	int newValue = value;
 
@@ -23,26 +23,22 @@ inline BYTE CheckRange(int value)
 	{
 		newValue = 0;
 	}
-
 	return newValue;
 }
 
 void RndFilter(BYTE* orginalPixels, BYTE* newPixels, int startIndex, int endIndex, int imageWidth)
 {
-
-
 	for (int i = startIndex; i < endIndex; i++) {
 
-		newPixels[i] = CheckRange((orginalPixels[i - imageWidth - xd] * kernel[0]) +
+		newPixels[i] = CheckRange((orginalPixels[i - imageWidth - step] * kernel[0]) +
 										(orginalPixels[i - imageWidth] * kernel[1]) +
-										(orginalPixels[i - imageWidth + xd] * kernel[2]) +
-										(orginalPixels[i - xd] * kernel[3]) +
+										(orginalPixels[i - imageWidth + step] * kernel[2]) +
+										(orginalPixels[i - step] * kernel[3]) +
 										(orginalPixels[i] * kernel[4]) +
-										(orginalPixels[i + xd] * kernel[5]) +
-										(orginalPixels[i + imageWidth - xd] * kernel[6]) +
+										(orginalPixels[i + step] * kernel[5]) +
+										(orginalPixels[i + imageWidth - step] * kernel[6]) +
 										(orginalPixels[i + imageWidth] * kernel[7]) +
-										(orginalPixels[i + imageWidth + xd] * kernel[8]));
-	 
+										(orginalPixels[i + imageWidth + step] * kernel[8]));	 
 	}
 }
 
