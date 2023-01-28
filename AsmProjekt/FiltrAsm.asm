@@ -48,7 +48,6 @@ pinsrb xmm3, byte ptr[RCX ],4				;Id.4.  Locate mask value -2 in xmm3
 
 pmullw xmm3, xmm4							;Multiply values in xmm3 with filter mask values stored in xmm4
 
-
 pxor xmm2, xmm2								;Clear xmm2
 psadbw xmm1, xmm2							;Sum pixel values of two registers and move result to xmm1
 
@@ -56,18 +55,15 @@ paddsw xmm1, xmm3							;Sum pixel signed values of two registers.
 pshufd xmm3, xmm3, 00111001b				;Dectrement stack pointer.
 paddsw xmm1, xmm3							;Sum pixel signed values of two registers. 
 
-
 pextrb eax, xmm1,1							;Check if the sum value is lower than 0.				f0 240>
 cmp eax, 240								;Compare
 jg negativeValue							;If value is negative number jump to negativeValue		
-
 
 movd eax, xmm1							
 
 mov     ebx, 255							;Check if the sum value is greater than 255
 cmp     eax, ebx							;Compare
-cmovg   eax, ebx							;Move 255 value if the sum is greater
-					
+cmovg   eax, ebx							;Move 255 value if the sum is greater				
 
 mov byte ptr[R12], al						;Place clamped value in place in table					
 

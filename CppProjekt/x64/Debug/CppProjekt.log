@@ -1,3 +1,7 @@
-﻿  FiltrCpp.cpp
-F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\CppProjekt\FiltrCpp.cpp(19,51): warning C4244: "return": konwersja z "float" do "int", możliwa utrata danych
+﻿  pch.cpp
+  dllmain.cpp
+  FiltrCpp.cpp
+F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\CppProjekt\FiltrCpp.cpp(43,55): warning C4244: "argument": konwersja z "float" do "int", możliwa utrata danych
+  Generowanie kodu...
+     Trwa tworzenie biblioteki F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.lib i obiektu F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.exp
   CppProjekt.vcxproj -> F:\GitHub\Gradientowy-filtr-kierunkowy-wschodni\x64\Debug\CppProjekt.dll
