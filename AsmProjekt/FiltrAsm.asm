@@ -1,3 +1,11 @@
+;RCX - OldPixels pointer
+;R12 - NewPixels pointer
+;R8 - Starting index
+;R9 - End index
+;R10 - width
+;R11 - Negative width
+
+
 
 ;kernel
 ;-1  1  1
@@ -5,7 +13,6 @@
 ;-1  1  1 
 .data
 
-;multiArray word -1,0,-1,0,-2,0,-1,0
 multiArray word -1,0,-2,0,0,0,0,0
 .code
 AsmProc proc
@@ -42,14 +49,14 @@ pinsrb xmm3, byte ptr[RCX + R11 -3] ,0		;Id.0. Locate mask values -1 in xmm3
 pinsrb xmm3, byte ptr[RCX -3 ]		,1		;Id.1. Locate mask values -1 in xmm3
 pinsrb xmm3, byte ptr[RCX + R10 -3] ,2		;Id.2. Locate mask values -1 in xmm3
 
-psadbw xmm3,xmm2							;Sum pixel values in xmm3
+psadbw xmm3,xmm2							;Sum pixel values with mask value -1 
 
-pinsrb xmm3, byte ptr[RCX ],4				;Id.4.  Locate mask value -2 in xmm3
+pinsrb xmm3, byte ptr[RCX ],4				;Id.4.  Locate pixel with mask value -2 in xmm3
 
 pmullw xmm3, xmm4							;Multiply values in xmm3 with filter mask values stored in xmm4
 
 pxor xmm2, xmm2								;Clear xmm2
-psadbw xmm1, xmm2							;Sum pixel values of two registers and move result to xmm1
+psadbw xmm1, xmm2							;Sum pixel values with mask value 1
 
 paddsw xmm1, xmm3							;Sum pixel signed values of two registers. 
 pshufd xmm3, xmm3, 00111001b				;Dectrement stack pointer.
