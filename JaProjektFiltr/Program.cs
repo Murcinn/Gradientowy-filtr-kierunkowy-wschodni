@@ -53,7 +53,7 @@ namespace JaProjektFiltr
             BitmapSource newBitmap = new BitmapImage(new System.Uri(inputFilePath));
 
 
-            if (int.Parse(algorithmType) == 1)
+            if (int.Parse(algorithmType) == 2)
             {
                 double[] arr = new double[100];
                 for (int i = 0; i < arr.Length; i++)
@@ -75,7 +75,7 @@ namespace JaProjektFiltr
                 Console.WriteLine("Algorithm language: Cpp");
                 Console.WriteLine("algorithm duration: " + arr[50] + "ms");
             }
-            else if (int.Parse(algorithmType) == 2)
+            else if (int.Parse(algorithmType) == 1)
             {
 
                 double[] arr = new double[100];
